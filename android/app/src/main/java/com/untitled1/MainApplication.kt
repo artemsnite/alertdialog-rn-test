@@ -11,6 +11,12 @@ import com.facebook.react.ReactHost
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
+import com.facebook.react.shell.MainReactPackage
+import com.untitled1.AlertDialogModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.uimanager.ViewManager
+
 
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
@@ -21,10 +27,19 @@ class MainApplication : Application(), ReactApplication {
         this,
         object : DefaultReactNativeHost(this) {
           override fun getPackages(): List<ReactPackage> {
-            // Packages that cannot be autolinked yet can be added manually here, for example:
-            // packages.add(new MyReactNativePackage());
-            return PackageList(this).packages
-          }
+                  val packages = PackageList(this).packages
+                  // Add custom packages here
+                  packages.add(object : ReactPackage {
+                      override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
+                          return listOf(AlertDialogModule(reactContext))
+                      }
+
+                      override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
+                          return emptyList() // If you have custom ViewManagers, they would be added here
+                      }
+                  })
+                  return packages
+              }
 
           override fun getJSMainModuleName(): String = ".expo/.virtual-metro-entry"
 
